@@ -76,14 +76,17 @@ func (p Productos) CalcularPrecios(ids ...int) []Carrito {
 // de ese producto usando los precios de todos los supermercados.
 func (p Productos) Promedio(idProducto int) float64 {
 
-	listadoDeProductos, _ := LeerProductos("productos.json")
-
 	var precioPromedio float64
 
-	for _, producto := range listadoDeProductos {
+	for _, producto := range p {
 
 		if strconv.FormatInt(int64(idProducto), 10) == producto[1] {
-			precio, _ := strconv.ParseFloat(producto[2], 64)
+			precio, err := strconv.ParseFloat(producto[2], 64)
+
+			if err != nil {
+				continue
+			}
+
 			precioPromedio += precio
 		}
 
@@ -95,15 +98,17 @@ func (p Productos) Promedio(idProducto int) float64 {
 // el producto mas barato que haya encontrado.
 func (p Productos) BuscarMasBarato(idProducto int) (Producto, bool) {
 
-	listadoDeProductos, _ := LeerProductos("productos.json")
-
 	productoMasBarato := ProductoMasBarato{Id: idProducto, PrecioProducto: 0}
 
-	for _, producto := range listadoDeProductos {
+	for _, producto := range p {
 
 		if strconv.FormatInt(int64(idProducto), 10) == producto[1] {
 
-			precio, _ := strconv.Atoi(producto[2])
+			precio, err := strconv.Atoi(producto[2])
+
+			if err != nil {
+				continue
+			}
 
 			if productoMasBarato.Precio() == 0 || precio < productoMasBarato.Precio() {
 				productoMasBarato.PrecioProducto = precio
